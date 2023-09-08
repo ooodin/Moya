@@ -8,7 +8,6 @@ import OHHTTPStubsSwift
 #endif
 
 @testable import Moya
-@testable import ReactiveMoya
 
 func beIdenticalToResponse(_ expectedValue: Moya.Response) -> Predicate<Moya.Response> {
     Predicate { expression in
@@ -315,43 +314,6 @@ final class MoyaProviderIntegrationTests: QuickSpec {
                 }
             }
 
-            describe("a reactive provider with SignalProducer") {
-                var provider: MoyaProvider<GitHub>!
-                beforeEach {
-                    provider = MoyaProvider<GitHub>()
-                }
-
-                it("returns some data for zen request") {
-                    var message: String?
-
-                    waitUntil { done in
-                        provider.reactive.request(.zen).startWithResult { result in
-                            if case .success(let response) = result {
-                                message = String(data: response.data, encoding: String.Encoding.utf8)
-                                done()
-                            }
-                        }
-                    }
-
-                    expect(message) == zenMessage
-                }
-
-                it("returns some data for user profile request") {
-                    var message: String?
-
-                    waitUntil { done in
-                        let target: GitHub = .userProfile("ashfurrow")
-                        provider.reactive.request(target).startWithResult { result in
-                            if case .success(let response) = result {
-                                message = String(data: response.data, encoding: String.Encoding.utf8)
-                                done()
-                            }
-                        }
-                    }
-
-                    expect(message) == userMessage
-                }
-            }
         }
 
         // Resolves ValidationType not working with multipart upload #1590
